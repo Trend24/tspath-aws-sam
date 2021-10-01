@@ -34,6 +34,7 @@ import * as escodegen from 'escodegen';
 import { ConfigFile } from './lib/ConfigFile';
 import { PathResolver } from './lib/PathResolver';
 import { Arguments } from './lib/Arguments';
+import slash from 'slash';
 
 /**
  * Parser engine class
@@ -123,11 +124,11 @@ export class ParserEngine {
 
             // 2018-06-02: Workaround for bug with same prefix Aliases e.g @db and @dbCore
             // Cut alias prefix for mapping comparison
-            const requirePrefix = jsRequire.substring(0, jsRequire.indexOf(path.sep));
+            const requirePrefix = jsRequire.substring(0, jsRequire.indexOf('/'));
 
-            let pathPrefix = './';
+            let pathPrefix = `.${path.sep}`;
             if(this.args.absPath) {
-                pathPrefix = '/';
+                pathPrefix = path.sep;
             }
             if (requirePrefix === strippedAlias) {
                 let result = jsRequire.replace(strippedAlias, mapping);
@@ -146,13 +147,16 @@ export class ParserEngine {
                     relativePath = pathPrefix + relativePath;
                 }
 
+                if(path.sep === path.win32.sep){
+                    relativePath = slash(relativePath);
+                }
+
                 if(this.args.absPath) {
                     relativePath = relativePath.replace(/^(?:\.\.\/)+/, '');
                     if (relativePath[0] !== path.sep) {
                         relativePath = path.sep + relativePath;
                     }
                 }
-                console.log(relativePath);
                 jsRequire = relativePath;
                 break;
             }

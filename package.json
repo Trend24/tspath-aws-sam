@@ -37,6 +37,7 @@
     "escodegen": "^1.12.0",
     "espree": "^6.2.1",
     "prompt-confirm": "^2.0.4",
+    "slash": "^4.0.0",
     "yargs": "^14.0.0"
   },
   "devDependencies": {
