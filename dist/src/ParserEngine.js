@@ -102,10 +102,10 @@ class ParserEngine {
             mapping = utils_1.Utils.stripWildcard(mapping);
             // 2018-06-02: Workaround for bug with same prefix Aliases e.g @db and @dbCore
             // Cut alias prefix for mapping comparison
-            const requirePrefix = jsRequire.substring(0, jsRequire.indexOf(path.sep));
-            let pathPrefix = './';
+            const requirePrefix = jsRequire.substring(0, jsRequire.indexOf('/'));
+            let pathPrefix = `.${path.sep}`;
             if (this.args.absPath) {
-                pathPrefix = '/';
+                pathPrefix = path.sep;
             }
             if (requirePrefix === strippedAlias) {
                 let result = jsRequire.replace(strippedAlias, mapping);
@@ -120,13 +120,15 @@ class ParserEngine {
                 if (relativePath[0] !== '.') {
                     relativePath = pathPrefix + relativePath;
                 }
+                if (path.sep === path.win32.sep) {
+                    relativePath = this.slash(relativePath);
+                }
                 if (this.args.absPath) {
                     relativePath = relativePath.replace(/^(?:\.\.\/)+/, '');
                     if (relativePath[0] !== path.sep) {
-                        relativePath = path.sep + relativePath;
+                        relativePath = path.posix.sep + relativePath;
                     }
                 }
-                console.log(relativePath);
                 jsRequire = relativePath;
                 break;
             }
@@ -291,6 +293,14 @@ class ParserEngine {
             return false;
         }
         return this.fileFilter.indexOf(fileExtension) > -1;
+    }
+    slash(path) {
+        const isExtendedLengthPath = /^\\\\\?\\/.test(path);
+        const hasNonAscii = /[^\u0000-\u0080]+/.test(path); // eslint-disable-line no-control-regex
+        if (isExtendedLengthPath || hasNonAscii) {
+            return path;
+        }
+        return path.replace(/\\/g, '/');
     }
 }
 exports.ParserEngine = ParserEngine;

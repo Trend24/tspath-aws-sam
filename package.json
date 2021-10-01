@@ -3,7 +3,7 @@
   "version": "2.1.4",
   "description": "TypeScript Path Igniter resolves @paths specified in tsconfig",
   "scripts": {
-    "build": "NODE_ENV=production tsc",
+    "build": "SET NODE_ENV=development && tsc",
     "tspath": "NODE_ENV=dev node ./dist/index.js",
     "test": "yarn tspath --root tests",
     "watch": "tsc -w",
@@ -37,7 +37,6 @@
     "escodegen": "^1.12.0",
     "espree": "^6.2.1",
     "prompt-confirm": "^2.0.4",
-    "slash": "^4.0.0",
     "yargs": "^14.0.0"
   },
   "devDependencies": {

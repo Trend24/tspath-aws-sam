@@ -31,6 +31,7 @@ const ConfigFinder_1 = require("./ConfigFinder");
 const chalk_1 = require("chalk");
 // @ts-ignore
 const version_json_1 = require("./version.json");
+const path = require("path");
 /**
  * TSPath main class
  */
@@ -52,7 +53,7 @@ class Command {
         try {
             let confPath = projectPath;
             if (args.root) {
-                confPath = projectPath + '/' + args.root;
+                confPath = projectPath + path.sep + args.root;
             }
             config = ConfigFinder_1.ConfigFinder.find(confPath);
             config.readContents();

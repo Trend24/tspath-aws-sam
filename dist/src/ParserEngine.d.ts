@@ -81,4 +81,5 @@ export declare class ParserEngine {
      * @returns {boolean}
      */
     private matchExtension;
+    private slash;
 }

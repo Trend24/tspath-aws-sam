@@ -34,7 +34,6 @@ import * as escodegen from 'escodegen';
 import { ConfigFile } from './lib/ConfigFile';
 import { PathResolver } from './lib/PathResolver';
 import { Arguments } from './lib/Arguments';
-import slash from 'slash';
 
 /**
  * Parser engine class
@@ -148,15 +147,16 @@ export class ParserEngine {
                 }
 
                 if(path.sep === path.win32.sep){
-                    relativePath = slash(relativePath);
+                    relativePath = this.slash(relativePath);
                 }
 
                 if(this.args.absPath) {
                     relativePath = relativePath.replace(/^(?:\.\.\/)+/, '');
                     if (relativePath[0] !== path.sep) {
-                        relativePath = path.sep + relativePath;
+                        relativePath = path.posix.sep + relativePath;
                     }
                 }
+
                 jsRequire = relativePath;
                 break;
             }
@@ -347,5 +347,15 @@ export class ParserEngine {
         }
 
         return this.fileFilter.indexOf(fileExtension) > -1;
+    }
+    private slash(path:string):string {
+        const isExtendedLengthPath = /^\\\\\?\\/.test(path);
+        const hasNonAscii = /[^\u0000-\u0080]+/.test(path); // eslint-disable-line no-control-regex
+    
+        if (isExtendedLengthPath || hasNonAscii) {
+            return path;
+        }
+    
+        return path.replace(/\\/g, '/');
     }
 }
